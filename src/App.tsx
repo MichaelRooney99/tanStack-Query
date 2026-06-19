@@ -8,7 +8,7 @@ import {
 const queryClient = new QueryClient();
 
 function GitHubProfile() {
-  const query = useQuery({
+  const {isLoading, isError, data, error} = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
       const response = await fetch('https://api.github.com/users/MichaelRooney99');
@@ -18,8 +18,26 @@ function GitHubProfile() {
       return response.json();
     }
   });
-  console.log(query.data);
-  return <div>GitHub Profile:</div>;
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  
+  if (isError) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  return (
+  <div>
+    <div>
+      <img src={data?.avatar_url} alt="Profile" />
+    </div>
+    <div>
+      <h2>{data.name}</h2>
+      <p>{data.login}</p>
+    </div>
+  </div>
+  );
 }
 
 function App() {
